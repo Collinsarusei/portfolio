@@ -111,19 +111,55 @@ export default function Portfolio() {
     }
   }
 
-  const downloadResume = () => {
+  const downloadResume = async () => {
     try {
-      // Create a link element and trigger download
+      // Fetch the PDF file from the public directory
+      const response = await fetch("/resume.pdf", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/pdf",
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      // Convert response to blob
+      const blob = await response.blob()
+
+      // Create blob URL
+      const blobUrl = window.URL.createObjectURL(blob)
+
+      // Create temporary link element
       const link = document.createElement("a")
-      link.href = "/resume.pdf"
+      link.href = blobUrl
       link.download = "Collins_Arusei_Resume.pdf"
+
+      // Append to body, click, and remove
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+
+      // Clean up blob URL
+      window.URL.revokeObjectURL(blobUrl)
     } catch (error) {
-      console.log("Download error:", error)
-      // Fallback: open in new tab
-      window.open("/resume.pdf", "_blank")
+      console.error("Error downloading resume:", error)
+
+      // Fallback: Try direct link approach
+      try {
+        const link = document.createElement("a")
+        link.href = "/resume.pdf"
+        link.download = "Collins_Arusei_Resume.pdf"
+        link.target = "_blank"
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } catch (fallbackError) {
+        console.error("Fallback download failed:", fallbackError)
+        // Last resort: open in new tab
+        window.open("/resume.pdf", "_blank")
+      }
     }
   }
 

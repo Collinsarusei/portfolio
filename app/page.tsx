@@ -186,21 +186,21 @@ export default function Portfolio() {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - Fixed mobile spacing */}
       <section
         id="home"
-        className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
+        className="min-h-screen flex items-center justify-center px-4 pt-20 md:pt-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
       >
         <div className="container mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-12 text-center lg:text-left">
             <div className="flex-1">
               <p className="text-xl text-blue-400 mb-4 font-medium">Hi, I'm Collins Arusei</p>
-              <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight">
                 <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                   Software Developer
                 </span>
               </h1>
-              <p className="text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed">
+              <p className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed">
                 Self-taught Software Developer | Full-Stack Enthusiast | Tech Innovator
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -279,7 +279,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* Projects Section */}
+      {/* Projects Section - Added glow effects */}
       <section id="projects" className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-16">
@@ -295,7 +295,10 @@ export default function Portfolio() {
           <div className="grid md:grid-cols-2 gap-8">
             {projects.map((project, index) => (
               <div key={index} className="group">
-                <Card className="overflow-hidden bg-slate-800/50 border-slate-600 hover:border-blue-400/50 transition-all duration-300 h-full">
+                <Card className="overflow-hidden bg-slate-800/50 border-slate-600 hover:border-blue-400/50 transition-all duration-300 h-full relative hover:shadow-2xl hover:shadow-blue-500/20">
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+
                   <div className="relative overflow-hidden">
                     <Image
                       src={project.image || "/placeholder.svg"}
@@ -305,7 +308,7 @@ export default function Portfolio() {
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
-                      <Button asChild className="bg-blue-500 hover:bg-blue-600">
+                      <Button asChild className="bg-blue-500 hover:bg-blue-600 shadow-lg shadow-blue-500/25">
                         <Link href={project.url} target="_blank">
                           <ExternalLink className="w-4 h-4 mr-2" />
                           View Live Demo
@@ -313,24 +316,29 @@ export default function Portfolio() {
                       </Button>
                     </div>
                   </div>
-                  <CardHeader>
+                  <CardHeader className="relative z-10">
                     <div className="flex justify-between items-start mb-2">
-                      <CardTitle className="text-xl text-white">{project.title}</CardTitle>
-                      <Badge variant="secondary" className="bg-blue-500/20 text-blue-400 border-blue-400/30">
+                      <CardTitle className="text-xl text-white group-hover:text-blue-300 transition-colors">
+                        {project.title}
+                      </CardTitle>
+                      <Badge
+                        variant="secondary"
+                        className="bg-blue-500/20 text-blue-400 border-blue-400/30 group-hover:bg-blue-500/30 group-hover:shadow-sm group-hover:shadow-blue-400/50 transition-all"
+                      >
                         {project.category}
                       </Badge>
                     </div>
-                    <CardDescription className="text-gray-300 text-base leading-relaxed">
+                    <CardDescription className="text-gray-300 text-base leading-relaxed group-hover:text-gray-200 transition-colors">
                       {project.description}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="relative z-10">
                     <div className="flex flex-wrap gap-2 mb-4">
                       {project.tech.map((tech, techIndex) => (
                         <Badge
                           key={techIndex}
                           variant="outline"
-                          className="text-xs border-slate-500 text-gray-300 hover:border-blue-400 hover:text-blue-400 transition-colors"
+                          className="text-xs border-slate-500 text-gray-300 hover:border-blue-400 hover:text-blue-400 group-hover:border-blue-400/70 group-hover:text-blue-300 transition-colors"
                         >
                           {tech}
                         </Badge>
@@ -338,7 +346,7 @@ export default function Portfolio() {
                     </div>
                     <Button
                       asChild
-                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 group-hover:shadow-lg group-hover:shadow-blue-500/25 transition-all"
                     >
                       <Link href={project.url} target="_blank">
                         Visit Project <ExternalLink className="w-4 h-4 ml-2" />

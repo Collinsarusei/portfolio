@@ -36,7 +36,7 @@ const projects = [
     description:
       "Online gifting web app for sending surprise gifts. Supports user events, secure monetary gifts, integrated payment & delivery tracking.",
     image: "/images/celebrate-project.png",
-    url: "https://giftme-eta.vercel.app/",
+    url: "https://giftme-orpin.vercel.app/",
     tech: ["Next.js", "MongoDB", "Payment API", "Delivery API"],
     category: "Gifting Platform",
   },
@@ -254,7 +254,7 @@ export default function Portfolio() {
                   className="border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-slate-900 bg-transparent"
                   asChild
                 >
-                  <Link href="https://giftme-eta.vercel.app/support-developer" target="_blank">
+                  <Link href="https://giftme-orpin.vercel.app/support-developer" target="_blank">
                     <Coffee className="mr-2 w-4 h-4" />
                     Buy Me a Coffee
                   </Link>

@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useEffect, useState } from "react"
+import jsPDF from "jspdf"
+import html2canvas from "html2canvas"
 
 const projects = [
   {
@@ -58,6 +60,24 @@ const projects = [
     tech: ["React", "Vercel", "D3.js/Chart.js", "MongoDB"],
     category: "Health & Fitness",
   },
+  {
+    title: "Unwind Business Enterprise",
+    description:
+      "Corporate travel & logistics platform offering business safaris, trade tours, global shipping, and travel booking services for international business expansion.",
+    image: "/images/unwind.png",
+    url: "https://www.unwindbusinessenterprise.com",
+    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Responsive Design"],
+    category: "Business & Logistics",
+  },
+  {
+    title: "Lindatoto",
+    description:
+      "Healthcare immunization tracking application with hospital inventory management. Tracks patient vaccination records, monitors vaccine stock levels, and generates immunization reports.",
+    image: "/images/lindatoto.png",
+    url: "https://lindatoto.com",
+    tech: ["React", "Database Management", "Healthcare APIs", "Reporting"],
+    category: "Healthcare System",
+  },
 ]
 
 const skills = {
@@ -77,6 +97,18 @@ const skills = {
     { name: "Supabase", level: 75 },
     { name: "Paystack API", level: 85 },
     { name: "Daraja API", level: 80 },
+  ],
+  it: [
+    { name: "Network Administration", level: 80 },
+    { name: "System Troubleshooting", level: 85 },
+    { name: "Hardware & Software Support", level: 82 },
+    { name: "Cloud Services", level: 75 },
+  ],
+  cybersecurity: [
+    { name: "Security Principles", level: 80 },
+    { name: "Threat Analysis", level: 75 },
+    { name: "Secure Coding", level: 78 },
+    { name: "Network Security", level: 75 },
   ],
   other: [
     { name: "Git", level: 85 },
@@ -113,53 +145,75 @@ export default function Portfolio() {
 
   const downloadResume = async () => {
     try {
-      // Fetch the PDF file from the public directory
-      const response = await fetch("/resume.pdf", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/pdf",
-        },
+      // Create a hidden iframe to load the resume content
+      const iframe = document.createElement("iframe")
+      iframe.style.position = "fixed"
+      iframe.style.left = "-9999px"
+      iframe.style.width = "850px"
+      iframe.style.height = "1200px"
+      document.body.appendChild(iframe)
+
+      // Load the resume page in the iframe
+      iframe.src = "/generate-resume"
+
+      // Wait for iframe to load
+      await new Promise((resolve) => {
+        iframe.onload = resolve
       })
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+      // Wait a bit more for content to render
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      // Get the resume content from iframe
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
+      if (!iframeDoc) throw new Error("Could not access iframe content")
+
+      const resumeElement = iframeDoc.querySelector('[data-resume-content="true"]')
+      if (!resumeElement) throw new Error("Resume content not found")
+
+      // Generate canvas from the content
+      const canvas = await html2canvas(resumeElement as HTMLElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        backgroundColor: "#ffffff",
+      })
+
+      // Create PDF
+      const imgData = canvas.toDataURL("image/png", 1.0)
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+        compress: true,
+      })
+
+      const imgWidth = 210
+      const pageHeight = 297
+      const imgHeight = (canvas.height * imgWidth) / canvas.width
+      let heightLeft = imgHeight
+      let position = 0
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight, undefined, "FAST")
+      heightLeft -= pageHeight
+
+      while (heightLeft >= 0) {
+        position = heightLeft - imgHeight
+        pdf.addPage()
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight, undefined, "FAST")
+        heightLeft -= pageHeight
       }
 
-      // Convert response to blob
-      const blob = await response.blob()
+      // Download PDF
+      pdf.save("Collins_Arusei_Resume.pdf")
 
-      // Create blob URL
-      const blobUrl = window.URL.createObjectURL(blob)
-
-      // Create temporary link element
-      const link = document.createElement("a")
-      link.href = blobUrl
-      link.download = "Collins_Arusei_Resume.pdf"
-
-      // Append to body, click, and remove
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-
-      // Clean up blob URL
-      window.URL.revokeObjectURL(blobUrl)
+      // Clean up
+      document.body.removeChild(iframe)
     } catch (error) {
-      console.error("Error downloading resume:", error)
-
-      // Fallback: Try direct link approach
-      try {
-        const link = document.createElement("a")
-        link.href = "/resume.pdf"
-        link.download = "Collins_Arusei_Resume.pdf"
-        link.target = "_blank"
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      } catch (fallbackError) {
-        console.error("Fallback download failed:", fallbackError)
-        // Last resort: open in new tab
-        window.open("/resume.pdf", "_blank")
-      }
+      console.error("Error generating PDF:", error)
+      // Fallback: open in new tab
+      window.open("/generate-resume", "_blank")
     }
   }
 
@@ -408,7 +462,7 @@ export default function Portfolio() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {Object.entries(skills).map(([category, skillList], index) => (
               <Card
                 key={category}
@@ -419,6 +473,8 @@ export default function Portfolio() {
                     {category === "languages" && <Code className="w-5 h-5 mr-2 text-blue-400" />}
                     {category === "frameworks" && <Globe className="w-5 h-5 mr-2 text-purple-400" />}
                     {category === "backend" && <Database className="w-5 h-5 mr-2 text-green-400" />}
+                    {category === "it" && <Code className="w-5 h-5 mr-2 text-orange-400" />}
+                    {category === "cybersecurity" && <Code className="w-5 h-5 mr-2 text-red-400" />}
                     {category === "other" && <User className="w-5 h-5 mr-2 text-pink-400" />}
                     {category}
                   </CardTitle>
@@ -440,7 +496,11 @@ export default function Portfolio() {
                                   ? "bg-gradient-to-r from-purple-400 to-purple-600"
                                   : category === "backend"
                                     ? "bg-gradient-to-r from-green-400 to-green-600"
-                                    : "bg-gradient-to-r from-pink-400 to-pink-600"
+                                    : category === "it"
+                                      ? "bg-gradient-to-r from-orange-400 to-orange-600"
+                                      : category === "cybersecurity"
+                                        ? "bg-gradient-to-r from-red-400 to-red-600"
+                                        : "bg-gradient-to-r from-pink-400 to-pink-600"
                             }`}
                             style={{ width: `${skill.level}%` }}
                           />

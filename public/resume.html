@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collins Arusei - Resume</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: #fff;
+            padding: 40px;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 36px;
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            color: #4b5563;
+        }
+        
+        .contact-info a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        
+        h2 {
+            font-size: 24px;
+            color: #1e40af;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #93c5fd;
+            padding-bottom: 5px;
+        }
+        
+        h3 {
+            font-size: 18px;
+            color: #1f2937;
+            margin-top: 15px;
+            margin-bottom: 8px;
+        }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        
+        .project, .experience-item {
+            margin-bottom: 20px;
+        }
+        
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 5px;
+        }
+        
+        .project-title {
+            font-weight: bold;
+            color: #1e40af;
+            font-size: 16px;
+        }
+        
+        .project-link {
+            font-size: 13px;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        .project-category {
+            font-size: 13px;
+            color: #7c3aed;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .project-description {
+            margin-bottom: 8px;
+            color: #4b5563;
+        }
+        
+        .tech-stack {
+            font-size: 13px;
+            color: #059669;
+            font-style: italic;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .skill-category {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .skill-category h4 {
+            color: #1e40af;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+        
+        .skill-category ul {
+            list-style: none;
+        }
+        
+        .skill-category li {
+            padding: 3px 0;
+            font-size: 13px;
+            color: #4b5563;
+        }
+        
+        .education-item {
+            margin-bottom: 15px;
+        }
+        
+        .education-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        
+        .institution {
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .duration {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        .degree {
+            color: #4b5563;
+            margin-top: 3px;
+        }
+        
+        ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+        
+        li {
+            margin-bottom: 3px;
+            color: #4b5563;
+        }
+        
+        @media print {
+            body {
+                padding: 20px;
+            }
+            
+            .skills-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>COLLINS ARUSEI</h1>
+        <div class="subtitle">Full-Stack Software Developer | IT Specialist | Cybersecurity Enthusiast</div>
+        <div class="contact-info">
+            <span>📧 collinsaruse@gmail.com</span>
+            <span>📱 Available upon request</span>
+            <span>🌐 <a href="https://github.com/Collinsarusei" target="_blank">GitHub: Collinsarusei</a></span>
+            <span>💼 <a href="https://www.linkedin.com/in/collins-arusei-b5b74a2a9" target="_blank">LinkedIn</a></span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>PROFESSIONAL SUMMARY</h2>
+        <p>
+            Self-driven Full-Stack Software Developer and Information Technology student at Dedan Kimathi University of Technology 
+            with proven expertise in building production-ready web applications. Specialized in React, Next.js, TypeScript, and 
+            modern web technologies. Successfully deployed 6+ live applications serving real users across e-commerce, healthcare, 
+            logistics, and gifting platforms. Strong foundation in IT operations, system administration, and cybersecurity principles 
+            with hands-on experience in payment integration, real-time features, and secure authentication systems.
+        </p>
+    </div>
+
+    <div class="section">
+        <h2>EDUCATION</h2>
+        <div class="education-item">
+            <div class="education-header">
+                <span class="institution">Dedan Kimathi University of Technology</span>
+                <span class="duration">2023 - Present</span>
+            </div>
+            <div class="degree">Bachelor of Science in Information Technology</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>TECHNICAL SKILLS</h2>
+        <div class="skills-grid">
+            <div class="skill-category">
+                <h4>Programming Languages</h4>
+                <ul>
+                    <li>• JavaScript (Advanced)</li>
+                    <li>• TypeScript (Advanced)</li>
+                    <li>• Node.js (Advanced)</li>
+                    <li>• SQL (Intermediate)</li>
+                </ul>
+            </div>
+            
+            <div class="skill-category">
+                <h4>Frameworks & Libraries</h4>
+                <ul>
+                    <li>• React.js</li>
+                    <li>• Next.js</li>
+                    <li>• Tailwind CSS</li>
+                    <li>• D3.js / Chart.js</li>
+                </ul>
+            </div>
+            
+            <div class="skill-category">
+                <h4>Backend & Databases</h4>
+                <ul>
+                    <li>• MongoDB</li>
+                    <li>• Supabase</li>
+                    <li>• Paystack API</li>
+                    <li>• Daraja API (M-Pesa)</li>
+                </ul>
+            </div>
+            
+            <div class="skill-category">
+                <h4>IT & Infrastructure</h4>
+                <ul>
+                    <li>• Network Administration</li>
+                    <li>• System Troubleshooting</li>
+                    <li>• Hardware & Software Support</li>
+                    <li>• Cloud Services</li>
+                </ul>
+            </div>
+            
+            <div class="skill-category">
+                <h4>Cybersecurity</h4>
+                <ul>
+                    <li>• Security Principles</li>
+                    <li>• Threat Analysis</li>
+                    <li>• Secure Coding Practices</li>
+                    <li>• Network Security</li>
+                </ul>
+            </div>
+            
+            <div class="skill-category">
+                <h4>Other Skills</h4>
+                <ul>
+                    <li>• Git & Version Control</li>
+                    <li>• REST APIs</li>
+                    <li>• Responsive Design</li>
+                    <li>• Project Management</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>FEATURED PROJECTS</h2>
+        
+        <div class="project">
+            <div class="project-header">
+                <span class="project-title">UzaBidhaa Marketplace</span>
+                <span class="project-link">uzabidhaa.com</span>
+            </div>
+            <div class="project-category">E-commerce Platform</div>
+            <div class="project-description">
+                Local marketplace connecting buyers and sellers in Kenya. Features real-time messaging, product listings, 
+                secure payment integration, and user account management.
+            </div>
+            <div class="tech-stack">Tech Stack: Next.js, TypeScript, Tailwind CSS, Supabase, Node.js</div>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-title">CelebrateWith.me</span>
+                <span class="project-link">giftme-orpin.vercel.app</span>
+            </div>
+            <div class="project-category">Gifting Platform</div>
+            <div class="project-description">
+                Online gifting web application for sending surprise gifts. Supports user events, secure monetary gifts, 
+                integrated payment processing, and delivery tracking.
+            </div>
+            <div class="tech-stack">Tech Stack: Next.js, MongoDB, Payment APIs, Delivery Integration</div>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-title">Unwind Business Enterprise</span>
+                <span class="project-link">unwindbusinessenterprise.com</span>
+            </div>
+            <div class="project-category">Business & Logistics</div>
+            <div class="project-description">
+                Corporate travel and logistics platform offering business safaris, trade tours, global shipping, and travel 
+                booking services for international business expansion.
+            </div>
+            <div class="tech-stack">Tech Stack: Next.js, TypeScript, Tailwind CSS, Responsive Design</div>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-title">Lindatoto</span>
+                <span class="project-link">lindatoto.com</span>
+            </div>
+            <div class="project-category">Healthcare System</div>
+            <div class="project-description">
+                Healthcare immunization tracking application with hospital inventory management. Tracks patient vaccination 
+                records, monitors vaccine stock levels, and generates comprehensive immunization reports for healthcare providers.
+            </div>
+            <div class="tech-stack">Tech Stack: React, Database Management, Healthcare APIs, Reporting Systems</div>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-title">Habnet Solutions</span>
+                <span class="project-link">habnet-nu.vercel.app</span>
+            </div>
+            <div class="project-category">Corporate Website</div>
+            <div class="project-description">
+                Corporate website for a systems and supply firm. Showcases services, company values, legal documents, 
+                and project structure with modern animations and responsive design.
+            </div>
+            <div class="tech-stack">Tech Stack: React, CSS Animations, Responsive Design</div>
+        </div>
+
+        <div class="project">
+            <div class="project-header">
+                <span class="project-title">WeightWise</span>
+                <span class="project-link">weight-wise-sigma.vercel.app</span>
+            </div>
+            <div class="project-category">Health & Fitness</div>
+            <div class="project-description">
+                Fitness and health tracker application. Allows users to log measurements, track progress with interactive 
+                charts, and form healthy habits through gamification.
+            </div>
+            <div class="tech-stack">Tech Stack: React, Vercel, D3.js/Chart.js, MongoDB</div>
+        </div>
+    </div>
+
+    <div class="section"> & COMPETENCIES</h2>
+        <ul>
+            <li><strong>Full-Stack Development:</strong> Successfully deployed 6+ production-ready web applications serving real users across diverse industries</li>
+            <li><strong>Payment Integration:</strong> Integrated Paystack and M-Pesa (Daraja API) with secure transaction handling and PCI compliance</li>
+            <li><strong>Real-time Systems:</strong> Implemented live messaging, notifications, and real-time data updates using WebSockets and Supabase</li>
+            <li><strong>Healthcare Technology:</strong> Developed immunization tracking system with inventory management for healthcare providers</li>
+            <li><strong>E-commerce Solutions:</strong> Built marketplace platform with user authentication, product listings, and secure checkout</li>
+            <li><strong>UI/UX Excellence:</strong> Crafted responsive, mobile-first applications with modern design principles and accessibility standards</li>
+            <li><strong>Database Design:</strong> Architected and managed MongoDB and Supabase databases with optimized queries and data modeling</li>
+            <li><strong>Security Best Practices:</strong> Implemented secure authentication, data encryption, and protection against common vulnerabilitiesence</li>
+            <li>Self-taught modern web development through hands-on project experience</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>INTERESTS & ACTIVITIES</h2>
+        <p>Content Creation | Hiking | Indoor games | Music | Open Source Contribution</p>
+    </div>
+
+    <div class="section">
+        <h2>REFERENCES</h2>
+        <p>Available upon request</p>
+    </div>
+</body>
+</html>

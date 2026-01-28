@@ -31,6 +31,143 @@ export default function GenerateResumePDF() {
           backgroundColor: "#ffffff",
           windowWidth: element.scrollWidth,
           windowHeight: element.scrollHeight,
+          onclone: (clonedDoc) => {
+            // Remove all styles that might contain oklch
+            const styleElements = clonedDoc.querySelectorAll('style')
+            const linkElements = clonedDoc.querySelectorAll('link[rel="stylesheet"]')
+            
+            // Remove all existing styles to avoid oklch conflicts
+            styleElements.forEach(style => style.remove())
+            linkElements.forEach(link => link.remove())
+            
+            // Add simple inline styles without oklch
+            const safeStyle = clonedDoc.createElement('style')
+            safeStyle.textContent = `
+              * { box-sizing: border-box; }
+              body { 
+                font-family: Arial, sans-serif; 
+                margin: 0; 
+                padding: 32px; 
+                background: #ffffff; 
+                color: #374151; 
+              }
+              h1 { 
+                font-size: 36px; 
+                font-weight: 700; 
+                color: #1e3a8a; 
+                margin-bottom: 8px; 
+                text-align: center;
+              }
+              h2 { 
+                font-size: 24px; 
+                font-weight: 700; 
+                color: #1e3a8a; 
+                border-bottom: 2px solid #93c5fd; 
+                padding-bottom: 4px; 
+                margin-bottom: 12px; 
+              }
+              .header-info {
+                text-align: center;
+                font-size: 18px;
+                color: #4b5563;
+                margin-bottom: 16px;
+              }
+              .contact-info {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+                flex-wrap: wrap;
+                font-size: 14px;
+                color: #374151;
+                margin-bottom: 16px;
+              }
+              .section {
+                margin-bottom: 24px;
+              }
+              .skill-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 16px;
+              }
+              .skill-card {
+                background: #f9fafb;
+                padding: 12px;
+                border-radius: 4px;
+                border-left: 4px solid #2563eb;
+              }
+              .skill-card h4 {
+                font-weight: 700;
+                color: #1e3a8a;
+                margin-bottom: 8px;
+                font-size: 14px;
+              }
+              .skill-card ul {
+                font-size: 12px;
+                line-height: 1.5;
+                color: #374151;
+                list-style: none;
+                padding: 0;
+                margin: 0;
+              }
+              .project-item {
+                margin-bottom: 16px;
+              }
+              .project-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                margin-bottom: 4px;
+              }
+              .project-title {
+                font-weight: 700;
+                color: #1e3a8a;
+              }
+              .project-url {
+                font-size: 12px;
+                color: #4b5563;
+                font-style: italic;
+              }
+              .project-category {
+                font-size: 12px;
+                color: #7c3aed;
+                font-weight: 600;
+                margin-bottom: 4px;
+              }
+              .project-description {
+                font-size: 12px;
+                color: #374151;
+                line-height: 1.5;
+              }
+              .project-tech {
+                font-size: 11px;
+                color: #6b7280;
+                margin-top: 4px;
+              }
+              .education-item {
+                margin-bottom: 8px;
+              }
+              .university {
+                font-weight: 700;
+                color: #111827;
+              }
+              .date {
+                color: #4b5563;
+              }
+              .degree {
+                color: #374151;
+              }
+              .summary {
+                color: #374151;
+                line-height: 1.625;
+              }
+              .border-bottom {
+                border-bottom: 4px solid #2563eb;
+                padding-bottom: 20px;
+                margin-bottom: 32px;
+              }
+            `
+            clonedDoc.head.appendChild(safeStyle)
+          }
         })
 
         const imgData = canvas.toDataURL("image/png", 1.0)

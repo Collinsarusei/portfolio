@@ -1,78 +1,58 @@
 "use client"
-import {
-  Code,
-  Database,
-  Globe,
-  Mail,
-  Coffee,
-  ExternalLink,
-  Download,
-  Github,
-  User,
-  Calendar,
-  Heart,
-  Linkedin,
-  Instagram,
-} from "lucide-react"
+import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { useEffect, useState } from "react"
-import jsPDF from "jspdf"
-import html2canvas from "html2canvas"
+import { ChevronRight, Coffee, Download } from "lucide-react"
 
 const projects = [
   {
+    id: 1,
     title: "UzaBidhaa Marketplace",
-    description:
-      "Local marketplace for buyers and sellers in Kenya. Real-time messaging, product listings, payment integration.",
+    description: "Local marketplace for buyers and sellers in Kenya. Real-time messaging, product listings, payment integration.",
     image: "/images/uzabidhaa-project.png",
     url: "https://uzabidhaa.com",
     tech: ["Next.js", "TypeScript", "Tailwind", "Supabase", "Node.js"],
     category: "E-commerce Platform",
   },
   {
+    id: 2,
     title: "CelebrateWith.me",
-    description:
-      "Online gifting web app for sending surprise gifts. Supports user events, secure monetary gifts, integrated payment & delivery tracking.",
+    description: "Online gifting web app for sending surprise gifts. Supports user events, secure monetary gifts, integrated payment & delivery tracking.",
     image: "/images/celebrate-project.png",
     url: "https://giftme-orpin.vercel.app/",
     tech: ["Next.js", "MongoDB", "Payment API", "Delivery API"],
     category: "Gifting Platform",
   },
   {
+    id: 3,
     title: "Habnet Solutions",
-    description:
-      "Corporate website for a systems & supply firm. Showcases services, company values, legal documents, and project structure.",
+    description: "Corporate website for a systems & supply firm. Showcases services, company values, legal documents, and project structure.",
     image: "/images/habnet-project.png",
     url: "https://habnet-nu.vercel.app/",
     tech: ["React", "CSS", "Animation", "Responsive Design"],
     category: "Corporate Website",
   },
   {
+    id: 4,
     title: "WeightWise",
-    description:
-      "Fitness and health tracker app. Lets users log measurements, track progress with charts, and form healthy habits.",
+    description: "Fitness and health tracker app. Lets users log measurements, track progress with charts, and form healthy habits.",
     image: "/images/weightwise-project.png",
     url: "https://weight-wise-sigma.vercel.app/",
     tech: ["React", "Vercel", "D3.js/Chart.js", "MongoDB"],
     category: "Health & Fitness",
   },
   {
+    id: 5,
     title: "Unwind Business Enterprise",
-    description:
-      "Corporate travel & logistics platform offering business safaris, trade tours, global shipping, and travel booking services for international business expansion.",
+    description: "Corporate travel & logistics platform offering business safaris, trade tours, global shipping, and travel booking services for international business expansion.",
     image: "/images/unwind.png",
     url: "https://www.unwindbusinessenterprise.com",
     tech: ["Next.js", "TypeScript", "Tailwind CSS", "Responsive Design"],
     category: "Business & Logistics",
   },
   {
+    id: 6,
     title: "Lindatoto",
-    description:
-      "Healthcare immunization tracking application with hospital inventory management. Tracks patient vaccination records, monitors vaccine stock levels, and generates immunization reports.",
+    description: "Healthcare immunization tracking application with hospital inventory management. Tracks patient vaccination records, monitors vaccine stock levels, and generates immunization reports.",
     image: "/images/lindatoto.png",
     url: "https://lindatoto.com",
     tech: ["React", "Database Management", "Healthcare APIs", "Reporting"],
@@ -118,549 +98,893 @@ const skills = {
   ],
 }
 
-const quickFacts = [
-  { label: "University", value: "Dedan Kimathi University of Technology (2023–Present)" },
-  { label: "GitHub", value: "Collinsarusei" },
-  { label: "Email", value: "collinsaruse@gmail.com" },
-  { label: "Interests", value: "Content Creation, Hiking, Chess, Music" },
-]
+const contacts = {
+  email: "collinsaruse@gmail.com",
+  github: "https://github.com/Collinsarusei",
+  linkedin: "https://www.linkedin.com/in/collins-arusei-b5b74a2a9",
+  instagram: "https://instagram.com/chemoget_collo",
+  university: "Dedan Kimathi University of Technology (2023–Present)",
+  interests: "Content Creation, Hiking, Chess, Music, Watching Military Movies"
+}
 
-export default function Portfolio() {
-  const [mounted, setMounted] = useState(false)
+export default function Dashboard() {
+  const [currentView, setCurrentView] = useState<'dashboard' | 'projects' | 'project-detail' | 'skills' | 'contacts'>('dashboard')
+  const [selectedProject, setSelectedProject] = useState<any>(null)
+  const [typedText, setTypedText] = useState('')
+  const [leftPanelText, setLeftPanelText] = useState('')
+  const [userInput, setUserInput] = useState('')
+  const [terminalHistory, setTerminalHistory] = useState<string[]>([])
+  const [audioEnabled, setAudioEnabled] = useState(false)
+  const [imageReveal, setImageReveal] = useState(0)
+  const [radarAngle, setRadarAngle] = useState(0)
+  const [audioDuration, setAudioDuration] = useState(0)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
+
+  const fullText = `> COLLINS ARUSEI // SOFTWARE DEVELOPER
+> CLEARANCE: ALPHA LEVEL
+> SPECIALIZATION: FULL-STACK DEVELOPMENT
+> LOCATION: KENYA // OPERATIONS BASE
+> STATUS: ACTIVE // MISSION READY`
+
+  const leftPanelFullText = `ID: C.A-2047
+STATUS: ACTIVE
+CLEARANCE: ALPHA LEVEL
+SPECIALIZATION: SOFTWARE DEVELOPER
+LOCATION: KENYA - OPERATIONS BASE`
+
+  const playAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.4
+      audioRef.current.currentTime = 0
+      audioRef.current.play().then(() => {
+        setAudioEnabled(true)
+        console.log('Audio playing successfully')
+        
+        // Get audio duration for radar synchronization
+        if (audioRef.current?.duration && !audioDuration) {
+          setAudioDuration(audioRef.current.duration)
+          console.log('Audio duration:', audioRef.current.duration)
+        }
+      }).catch(err => {
+        console.log('Audio play failed:', err)
+        // Try multiple approaches for autoplay
+        attemptAutoplay()
+      })
+    }
+  }
+
+  const stopAudio = () => {
+    if (audioRef.current && audioEnabled) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+      setAudioEnabled(false)
+      setRadarAngle(0) // Reset radar
+      console.log('Audio stopped')
+    }
+  }
+
+  const attemptAutoplay = () => {
+    // Method 1: Try with muted then unmute
+    if (audioRef.current) {
+      audioRef.current.muted = true
+      audioRef.current.play().then(() => {
+        console.log('Muted autoplay successful, unmuting...')
+        setTimeout(() => {
+          if (audioRef.current) {
+            audioRef.current.muted = false
+            setAudioEnabled(true)
+          }
+        }, 100)
+      }).catch(err => {
+        console.log('Muted autoplay failed:', err)
+        // Method 2: Try with user interaction detection
+        setupUserInteractionPlay()
+      })
+    }
+  }
+
+  const setupUserInteractionPlay = () => {
+    const playOnFirstInteraction = () => {
+      if (audioRef.current && !audioEnabled) {
+        audioRef.current.volume = 0.3
+        audioRef.current.play().then(() => {
+          setAudioEnabled(true)
+          console.log('Audio playing on first user interaction')
+        }).catch(e => console.log('Audio still failed:', e))
+        // Remove listeners after first interaction
+        document.removeEventListener('click', playOnFirstInteraction)
+        document.removeEventListener('keydown', playOnFirstInteraction)
+        document.removeEventListener('mousemove', playOnFirstInteraction)
+        document.removeEventListener('scroll', playOnFirstInteraction)
+      }
+    }
+    
+    // Try multiple interaction types
+    document.addEventListener('click', playOnFirstInteraction, { once: true })
+    document.addEventListener('keydown', playOnFirstInteraction, { once: true })
+    document.addEventListener('mousemove', playOnFirstInteraction, { once: true })
+    document.addEventListener('scroll', playOnFirstInteraction, { once: true })
+  }
+
+  const forcePlayAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0
+      audioRef.current.volume = 0.5
+      audioRef.current.play().then(() => {
+        setAudioEnabled(true)
+        console.log('Force play successful')
+      }).catch(err => {
+        console.log('Force play failed:', err)
+      })
+    }
+  }
+
+  const downloadResume = () => {
+    // Stop audio before opening resume
+    stopAudio()
+    // Try to open the resume generation route
+    window.open('/generate-resume', '_blank')
+  }
+
+  // Radar animation effect - controls audio
+  useEffect(() => {
+    if (currentView === 'dashboard') {
+      // Reset radar angle
+      setRadarAngle(0)
+      
+      // Start radar sweep and audio together
+      const startRadarAndAudio = async () => {
+        // Try to start audio immediately
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0
+          audioRef.current.volume = 0.4
+          audioRef.current.muted = false
+          
+          // Force reload and play immediately
+          try {
+            await audioRef.current.load()
+            console.log('Audio loaded for radar control')
+            
+            // Play immediately
+            const playPromise = audioRef.current.play()
+            if (playPromise !== undefined) {
+              playPromise.then(() => {
+                setAudioEnabled(true)
+                console.log('Audio playing with radar control')
+              }).catch(err => {
+                console.log('Direct play failed, trying muted approach:', err)
+                // Try muted approach
+                audioRef.current!.muted = true
+                audioRef.current!.play().then(() => {
+                  setTimeout(() => {
+                    if (audioRef.current) {
+                      audioRef.current.muted = false
+                      setAudioEnabled(true)
+                      console.log('Audio playing after unmute')
+                    }
+                  }, 100)
+                }).catch(e => {
+                  console.log('Muted approach failed:', e)
+                  setupUserInteractionPlay()
+                })
+              })
+            }
+          } catch (err) {
+            console.log('Audio load failed:', err)
+            setupUserInteractionPlay()
+          }
+        }
+
+        // Start radar sweep animation immediately
+        const radarInterval = setInterval(() => {
+          setRadarAngle(prevAngle => {
+            const newAngle = prevAngle + 2 // Rotate 2 degrees every 50ms
+            
+            // Stop when radar completes full rotation (360 degrees)
+            if (newAngle >= 360) {
+              clearInterval(radarInterval)
+              stopAudio() // Stop audio when radar completes
+              return 360 // Set to final position
+            }
+            
+            return newAngle
+          })
+        }, 50) // Update every 50ms for smooth rotation
+
+        return () => clearInterval(radarInterval)
+      }
+
+      // Start radar and audio immediately on page load - no delay
+      startRadarAndAudio()
+    }
+  }, [currentView])
+
+  // Cleanup audio when leaving dashboard
+  useEffect(() => {
+    if (currentView !== 'dashboard') {
+      stopAudio()
+    }
+  }, [currentView])
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    if (currentView === 'dashboard') {
+      // Reset states
+      setImageReveal(0)
+      setTypedText('')
+      setLeftPanelText('')
+      // Note: Audio and radar are controlled by separate useEffect
 
-  const scrollToSection = (sectionId: string) => {
-    try {
-      const element = document.getElementById(sectionId)
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" })
+      // Main text typing animation
+      let index = 0
+      const interval = setInterval(() => {
+        if (index <= fullText.length) {
+          setTypedText(fullText.slice(0, index))
+          index++
+        } else {
+          clearInterval(interval)
+          // Note: Audio is controlled by radar, not by typing completion
+        }
+      }, 30)
+
+      // Left panel typing animation
+      let leftIndex = 0
+      const leftInterval = setInterval(() => {
+        if (leftIndex <= leftPanelFullText.length) {
+          setLeftPanelText(leftPanelFullText.slice(0, leftIndex))
+          leftIndex++
+        } else {
+          clearInterval(leftInterval)
+        }
+      }, 40)
+
+      // Image reveal animation
+      let revealIndex = 0
+      const revealInterval = setInterval(() => {
+        if (revealIndex <= 100) {
+          setImageReveal(revealIndex)
+          revealIndex += 2
+        } else {
+          clearInterval(revealInterval)
+        }
+      }, 50)
+
+      return () => {
+        clearInterval(interval)
+        clearInterval(leftInterval)
+        clearInterval(revealInterval)
+        // Note: Audio cleanup is handled by radar useEffect
       }
-    } catch (error) {
-      console.log("Scroll error:", error)
+    }
+  }, [currentView])
+
+  useEffect(() => {
+    if (currentView === 'projects') {
+      setTerminalHistory([
+        '> SYSTEM: Loading project database...',
+        '> DATABASE: Connected successfully',
+        '> FOUND: 6 active projects',
+        '> Please select a project number (1-6):'
+      ])
+    }
+  }, [currentView])
+
+  useEffect(() => {
+    if (currentView === 'skills') {
+      const skillsText = `> SYSTEM CAPABILITIES // TECHNICAL_SKILLS
+> 
+> LANGUAGES:
+> JavaScript: 90% | TypeScript: 85% | Node.js: 80% | SQL: 75%
+> 
+> FRAMEWORKS:
+> React.js: 90% | Next.js: 85% | Tailwind CSS: 88%
+> 
+> BACKEND:
+> MongoDB: 80% | Supabase: 75% | Paystack API: 85% | Daraja API: 80%
+> 
+> IT INFRASTRUCTURE:
+> Network Administration: 80% | System Troubleshooting: 85% | Hardware & Software Support: 82% | Cloud Services: 75%
+> 
+> CYBERSECURITY:
+> Security Principles: 80% | Threat Analysis: 75% | Secure Coding: 78% | Network Security: 75%
+> 
+> OTHER SKILLS:
+> Git: 85% | Responsive Design: 90% | REST APIs: 85% | Project Management: 75%
+> 
+> COMMAND: Type 'back' to return to dashboard`
+      
+      let index = 0
+      setTypedText('')
+      const interval = setInterval(() => {
+        if (index <= skillsText.length) {
+          setTypedText(skillsText.slice(0, index))
+          index++
+        } else {
+          clearInterval(interval)
+        }
+      }, 15)
+      return () => clearInterval(interval)
+    }
+  }, [currentView])
+
+  useEffect(() => {
+    if (currentView === 'contacts') {
+      // Don't use typing animation for contacts - show static content with clickable links
+      setTypedText(`> COMMUNICATION_PROTOCOLS // CONTACT_INFORMATION
+> 
+> PRIMARY CONTACT:
+> Email: collinsaruse@gmail.com
+> 
+> PROFESSIONAL NETWORKS:
+> GitHub: https://github.com/Collinsarusei
+> LinkedIn: https://www.linkedin.com/in/collins-arusei-b5b74a2a9
+> 
+> SOCIAL CHANNEL:
+> Instagram: https://instagram.com/chemoget_collo
+> 
+> ACADEMIC INFO:
+> University: Dedan Kimathi University of Technology (2023–Present)
+> 
+> PERSONAL INTERESTS:
+> Content Creation, Hiking, Chess, Music
+> 
+> COMMAND: Type 'back' to return to dashboard`)
+    }
+  }, [currentView])
+
+  useEffect(() => {
+    if (selectedProject && currentView === 'project-detail') {
+      const projectText = `> LOADING PROJECT: ${selectedProject.title}
+> CATEGORY: ${selectedProject.category}
+> STATUS: ACTIVE
+> TECHNOLOGIES: ${selectedProject.tech.join(' | ')}
+> DESCRIPTION: ${selectedProject.description}
+> URL: ${selectedProject.url}
+> COMMAND: Type 'back' to return to project list`
+      
+      let index = 0
+      setTypedText('')
+      const interval = setInterval(() => {
+        if (index <= projectText.length) {
+          setTypedText(projectText.slice(0, index))
+          index++
+        } else {
+          clearInterval(interval)
+        }
+      }, 20)
+      return () => clearInterval(interval)
+    }
+  }, [selectedProject, currentView])
+
+  const handleAccessProjects = () => {
+    setCurrentView('projects')
+    setUserInput('')
+  }
+
+  const handleAccessSkills = () => {
+    setCurrentView('skills')
+    setUserInput('')
+    setTypedText('')
+  }
+
+  const handleAccessContacts = () => {
+    setCurrentView('contacts')
+    setUserInput('')
+    setTypedText('')
+  }
+
+  const handleProjectSelect = (input: string) => {
+    const projectNum = parseInt(input)
+    if (projectNum >= 1 && projectNum <= projects.length) {
+      const project = projects[projectNum - 1]
+      setSelectedProject(project)
+      setCurrentView('project-detail')
+      setTerminalHistory(prev => [...prev, `> SELECTED: Project ${projectNum} - ${project.title}`])
+    } else if (input.toLowerCase() === 'back') {
+      setCurrentView('dashboard')
+      setTypedText('')
+      setUserInput('')
+    } else {
+      setTerminalHistory(prev => [...prev, `> ERROR: Invalid selection. Please enter 1-6 or 'back'`])
+    }
+    setUserInput('')
+  }
+
+  const handleTerminalSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (currentView === 'projects') {
+      setTerminalHistory(prev => [...prev, `> ${userInput}`])
+      handleProjectSelect(userInput)
+    } else if (currentView === 'project-detail' && userInput.toLowerCase() === 'back') {
+      setCurrentView('projects')
+      setSelectedProject(null)
+      setTypedText('')
+      setUserInput('')
+      setTerminalHistory([
+        '> SYSTEM: Loading project database...',
+        '> DATABASE: Connected successfully',
+        '> FOUND: 6 active projects',
+        '> Please select a project number (1-6):'
+      ])
+    } else if ((currentView === 'skills' || currentView === 'contacts') && userInput.toLowerCase() === 'back') {
+      setCurrentView('dashboard')
+      setTypedText('')
+      setUserInput('')
     }
   }
 
-  const downloadResume = async () => {
-    try {
-      // Create a hidden iframe to load the resume content
-      const iframe = document.createElement("iframe")
-      iframe.style.position = "fixed"
-      iframe.style.left = "-9999px"
-      iframe.style.width = "850px"
-      iframe.style.height = "1200px"
-      document.body.appendChild(iframe)
-
-      // Load the resume page in the iframe
-      iframe.src = "/generate-resume"
-
-      // Wait for iframe to load
-      await new Promise((resolve) => {
-        iframe.onload = resolve
-      })
-
-      // Wait a bit more for content to render
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      // Get the resume content from iframe
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
-      if (!iframeDoc) throw new Error("Could not access iframe content")
-
-      const resumeElement = iframeDoc.querySelector('[data-resume-content="true"]')
-      if (!resumeElement) throw new Error("Resume content not found")
-
-      // Generate canvas from the content
-      const canvas = await html2canvas(resumeElement as HTMLElement, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-        backgroundColor: "#ffffff",
-      })
-
-      // Create PDF
-      const imgData = canvas.toDataURL("image/png", 1.0)
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-        compress: true,
-      })
-
-      const imgWidth = 210
-      const pageHeight = 297
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
-      let heightLeft = imgHeight
-      let position = 0
-
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight, undefined, "FAST")
-      heightLeft -= pageHeight
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight
-        pdf.addPage()
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight, undefined, "FAST")
-        heightLeft -= pageHeight
-      }
-
-      // Download PDF
-      pdf.save("Collins_Arusei_Resume.pdf")
-
-      // Clean up
-      document.body.removeChild(iframe)
-    } catch (error) {
-      console.error("Error generating PDF:", error)
-      // Fallback: open in new tab
-      window.open("/generate-resume", "_blank")
+  useEffect(() => {
+    // Only auto-focus on desktop, not mobile to avoid keyboard popup issues
+    if (inputRef.current && window.innerWidth > 1024) {
+      inputRef.current.focus()
     }
-  }
+  }, [currentView])
 
-  if (!mounted) {
+  if (currentView === 'dashboard') {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+      <div 
+        className="min-h-screen bg-black text-green-400 font-mono overflow-hidden relative"
+      >
+        {/* Audio Element */}
+        <audio 
+          ref={audioRef} 
+          src="/Audio/websiteaudio.mp3" 
+          preload="auto" 
+          onError={(e) => console.log('Audio error:', e)}
+          onLoadStart={() => console.log('Audio loading...')}
+          onCanPlay={() => console.log('Audio can play')}
+          onLoadedData={() => console.log('Audio data loaded')}
+          onLoadedMetadata={() => console.log('Audio metadata loaded')}
+        />
+        
+        {/* Grid overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-900/10 via-black to-green-900/10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `
+              linear-gradient(rgba(34, 197, 94, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(34, 197, 94, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px'
+          }}></div>
+        </div>
+
+        {/* Scan lines */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="h-px bg-gradient-to-r from-transparent via-green-400 to-transparent opacity-50 animate-pulse" 
+               style={{ animation: 'scan 8s linear infinite' }}></div>
+        </div>
+
+        <div className="relative z-10 min-h-screen flex flex-col lg:flex-row">
+          {/* Left side - Profile */}
+          <div className="w-full lg:w-1/3 border-r lg:border-r border-green-400/30 p-4 lg:p-8 flex flex-col">
+            {/* Profile Image */}
+            <div className="mb-4 lg:mb-6">
+              <div className="relative mx-auto lg:mx-0 w-32 h-32 lg:w-48 lg:h-48 border-2 border-green-400 overflow-hidden">
+                <div className="relative w-full h-full">
+                  <div 
+                    className="absolute inset-0 overflow-hidden"
+                    style={{ 
+                      clipPath: `inset(0 0 ${100 - imageReveal}% 0)`
+                    }}
+                  >
+                    <Image
+                      src="/images/my image .jpeg"
+                      alt="Collins Arusei"
+                      fill
+                      className="object-cover"
+                      priority
+                      style={{ 
+                        objectPosition: 'center 45%'
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-green-400 animate-pulse"></div>
+              </div>
+            </div>
+
+            {/* ID Info */}
+            <div className="space-y-2 text-sm mb-4 lg:mb-6">
+              <pre className="text-xs leading-relaxed whitespace-pre-wrap">
+                {leftPanelText}
+                <span className="animate-pulse">_</span>
+              </pre>
+            </div>
+
+            {/* Download Resume Button */}
+            <div className="mb-4">
+              <button
+                onClick={downloadResume}
+                className="w-full px-3 py-2 bg-green-400/20 border border-green-400/50 text-green-400 text-xs rounded hover:bg-green-400/30 transition-colors flex items-center justify-center gap-2"
+              >
+                <Download className="w-3 h-3" />
+                DOWNLOAD RESUME
+              </button>
+            </div>
+
+            {/* Bottom info */}
+            <div className="mt-auto text-xs space-y-1 text-center lg:text-left">
+              <div>SPECIALIZATION: FULL-STACK DEVELOPER </div>
+              <div>LOCATION: KENYA - OPERATIONS BASE</div>
+            </div>
+          </div>
+
+          {/* Right side - Main Content */}
+          <div className="flex-1 p-4 lg:p-8 flex flex-col">
+            {/* Header */}
+            <div className="mb-6 lg:mb-8 text-center lg:text-left">
+              <h1 className="text-2xl lg:text-4xl font-bold mb-2">COLLINS ARUSEI</h1>
+              <div className="text-lg lg:text-xl text-green-300">SOFTWARE DEVELOPER / UI SYSTEMS DESIGNER</div>
+            </div>
+
+            {/* Typed Content */}
+            <div className="flex-1 flex flex-col lg:flex-row">
+              <div className="flex-1 mb-4 lg:mb-0">
+                <pre className="text-xs lg:text-sm leading-relaxed whitespace-pre-wrap">
+                  {typedText}
+                  <span className="animate-pulse">_</span>
+                </pre>
+              </div>
+              
+              {/* Radar Display */}
+              <div className="ml-0 lg:ml-8 flex items-start justify-center pt-4 lg:pt-12">
+                <div className="relative w-32 h-32 lg:w-40 lg:h-40 border-2 border-green-400/70 rounded-full bg-black/50 mb-4 lg:mb-8">
+                  {/* Radar circles */}
+                  <div className="absolute inset-0 border border-green-400/40 rounded-full"></div>
+                  <div className="absolute inset-2 border border-green-400/30 rounded-full"></div>
+                  <div className="absolute inset-4 border border-green-400/20 rounded-full"></div>
+                  <div className="absolute inset-6 border border-green-400/15 rounded-full"></div>
+                  <div className="absolute inset-8 border border-green-400/10 rounded-full"></div>
+                  
+                  {/* Cross lines */}
+                  <div className="absolute top-1/2 left-0 right-0 h-px bg-green-400/20"></div>
+                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-green-400/20"></div>
+                  
+                  {/* Degree markings */}
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 text-xs lg:text-xs text-green-400/60">0°</div>
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1 text-xs lg:text-xs text-green-400/60">180°</div>
+                  <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 text-xs lg:text-xs text-green-400/60">270°</div>
+                  <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1 text-xs lg:text-xs text-green-400/60">90°</div>
+                  
+                  {/* Diagonal lines */}
+                  <div className="absolute top-0 left-0 w-full h-full">
+                    <div className="absolute top-1/2 left-1/2 w-1/2 h-px bg-green-400/10 origin-left" style={{transform: 'translateY(-50%) rotate(45deg)'}}></div>
+                    <div className="absolute top-1/2 left-1/2 w-1/2 h-px bg-green-400/10 origin-left" style={{transform: 'translateY(-50%) rotate(-45deg)'}}></div>
+                    <div className="absolute top-1/2 left-1/2 w-1/2 h-px bg-green-400/10 origin-left" style={{transform: 'translateY(-50%) rotate(135deg)'}}></div>
+                    <div className="absolute top-1/2 left-1/2 w-1/2 h-px bg-green-400/10 origin-left" style={{transform: 'translateY(-50%) rotate(-135deg)'}}></div>
+                  </div>
+                  
+                  {/* Radar sweep line */}
+                  <div 
+                    className="absolute top-1/2 left-1/2 w-1/2 h-0.5 bg-gradient-to-r from-green-400 to-transparent origin-left"
+                    style={{
+                      transform: `translateY(-50%) rotate(${radarAngle}deg)`,
+                      boxShadow: '0 0 15px rgba(34, 197, 94, 0.9)',
+                      filter: 'brightness(1.5)'
+                    }}
+                  ></div>
+                  
+                  {/* Radar sweep trail */}
+                  <div 
+                    className="absolute inset-0 rounded-full"
+                    style={{
+                      background: `conic-gradient(from 0deg, transparent 0deg, rgba(34, 197, 94, 0.2) ${radarAngle}deg, transparent ${radarAngle}deg)`,
+                      filter: 'blur(1px)'
+                    }}
+                  ></div>
+                  
+                  {/* Animated blips */}
+                  <div 
+                    className="absolute w-2 h-2 bg-green-400 rounded-full animate-pulse"
+                    style={{
+                      top: '25%',
+                      left: '70%',
+                      boxShadow: '0 0 10px rgba(34, 197, 94, 0.8)',
+                      animation: 'pulse 2s infinite'
+                    }}
+                  ></div>
+                  <div 
+                    className="absolute w-1.5 h-1.5 bg-green-300 rounded-full animate-pulse"
+                    style={{
+                      top: '60%',
+                      left: '30%',
+                      boxShadow: '0 0 8px rgba(34, 197, 94, 0.6)',
+                      animation: 'pulse 1.5s infinite 0.5s'
+                    }}
+                  ></div>
+                  <div 
+                    className="absolute w-1 h-1 bg-green-500 rounded-full animate-pulse"
+                    style={{
+                      top: '40%',
+                      left: '80%',
+                      boxShadow: '0 0 6px rgba(34, 197, 94, 0.7)',
+                      animation: 'pulse 1.8s infinite 0.3s'
+                    }}
+                  ></div>
+                  
+                  {/* Center dot */}
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-green-400 rounded-full" style={{boxShadow: '0 0 8px rgba(34, 197, 94, 0.8)'}}></div>
+                  
+                  {/* Radar label */}
+                  <div className="absolute -bottom-8 lg:-bottom-10 left-1/2 transform -translate-x-1/2 text-xs text-green-400/70 font-bold">
+                    TACTICAL RADAR
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 mb-6 lg:mb-8 text-xs lg:text-sm">
+              <div className="text-center lg:text-left">
+                <div className="text-green-300">CODE EXPERTISE</div>
+                <div>JAVASCRIPT | REACT | NODE.JS</div>
+              </div>
+              <div className="text-center lg:text-left">
+                <div className="text-green-300">DESIGN FOCUS</div>
+                <div>TACTICAL UI / UX</div>
+              </div>
+              <div className="text-center lg:text-left">
+                <div className="text-green-300">MISSION READY</div>
+                <div>HIGH-PRECISION SYSTEMS</div>
+              </div>
+            </div>
+
+            {/* Access Buttons */}
+            <div className="text-center space-y-3 lg:space-y-4">
+              <button
+                onClick={handleAccessProjects}
+                className="px-6 lg:px-8 py-2 lg:py-3 border border-green-400 bg-green-400/10 hover:bg-green-400/20 transition-all duration-300 flex items-center gap-2 mx-auto w-full max-w-xs text-sm lg:text-base"
+              >
+                <span>&gt;&gt;</span> ACCESS PROJECTS
+              </button>
+              <div className="grid grid-cols-2 gap-3 lg:gap-4 max-w-xs mx-auto">
+                <button
+                  onClick={handleAccessSkills}
+                  className="px-4 lg:px-6 py-2 border border-green-400/50 bg-green-400/5 hover:bg-green-400/15 transition-all duration-300 text-xs lg:text-sm"
+                >
+                  VIEW SKILLS
+                </button>
+                <button
+                  onClick={handleAccessContacts}
+                  className="px-4 lg:px-6 py-2 border border-green-400/50 bg-green-400/5 hover:bg-green-400/15 transition-all duration-300 text-xs lg:text-sm"
+                >
+                  CONTACT INFO
+                </button>
+              </div>
+              <a
+                href="https://giftme-orpin.vercel.app/support-developer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 lg:px-6 py-2 border border-yellow-400/50 bg-yellow-400/10 hover:bg-yellow-400/20 transition-all duration-300 flex items-center gap-2 mx-auto w-full max-w-xs text-yellow-400 text-xs lg:text-sm"
+              >
+                <Coffee className="w-3 h-3 lg:w-4 lg:h-4" />
+                BUY ME COFFEE
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <style jsx>{`
+          @keyframes scan {
+            0% { transform: translateY(-100px); }
+            100% { transform: translateY(100vh); }
+          }
+          @keyframes imageGlow {
+            0% { 
+              filter: brightness(1) contrast(1);
+              transform: scale(1);
+            }
+            100% { 
+              filter: brightness(1.1) contrast(1.05);
+              transform: scale(1.02);
+            }
+          }
+        `}</style>
       </div>
     )
   }
 
-  return (
-    <div className="min-h-screen bg-slate-900 text-white">
-      {/* Floating Buy Me Coffee Button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        <Button
-          asChild
-          size="lg"
-          className="rounded-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 shadow-2xl"
-        >
-          <Link href="https://giftme-orpin.vercel.app/support-developer" target="_blank">
-            <Coffee className="w-5 h-5" />
-          </Link>
-        </Button>
-      </div>
-
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full bg-slate-900/95 backdrop-blur-sm z-40 border-b border-slate-700">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Collins Arusei
-          </div>
-          <div className="flex items-center gap-4">
-            <nav className="hidden md:flex gap-6">
-              <button onClick={() => scrollToSection("home")} className="hover:text-blue-400 transition-colors">
-                Home
-              </button>
-              <button onClick={() => scrollToSection("about")} className="hover:text-blue-400 transition-colors">
-                About
-              </button>
-              <button onClick={() => scrollToSection("projects")} className="hover:text-blue-400 transition-colors">
-                Projects
-              </button>
-              <button onClick={() => scrollToSection("skills")} className="hover:text-blue-400 transition-colors">
-                Skills
-              </button>
-              <button onClick={() => scrollToSection("contact")} className="hover:text-blue-400 transition-colors">
-                Contact
-              </button>
-            </nav>
-            <Button
-              onClick={downloadResume}
-              variant="outline"
-              className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-slate-900 bg-transparent"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Resume
-            </Button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Hero Section - Fixed mobile spacing */}
-      <section
-        id="home"
-        className="min-h-screen flex items-center justify-center px-4 pt-20 md:pt-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900"
-      >
-        <div className="container mx-auto">
-          <div className="flex flex-col lg:flex-row items-center gap-12 text-center lg:text-left">
-            <div className="flex-1">
-              <p className="text-xl text-blue-400 mb-4 font-medium">Hi, I'm Collins Arusei</p>
-              <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-                <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  Software Developer
-                </span>
-              </h1>
-              <p className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-8 leading-relaxed">
-                Self-taught Software Developer | Full-Stack Enthusiast | Tech Innovator
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <Button
-                  size="lg"
-                  onClick={downloadResume}
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-                >
-                  <Download className="mr-2 w-4 h-4" />
-                  Download Resume
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-slate-900 bg-transparent"
-                  asChild
-                >
-                  <Link href="https://giftme-orpin.vercel.app/support-developer" target="_blank">
-                    <Coffee className="mr-2 w-4 h-4" />
-                    Buy Me a Coffee
-                  </Link>
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex-1 flex justify-center">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full blur-2xl opacity-20"></div>
-                <Image
-                  src="/images/collins-photo.jpg"
-                  alt="Collins Arusei"
-                  width={400}
-                  height={400}
-                  className="relative rounded-full object-cover border-4 border-blue-400/50 shadow-2xl"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Me Section */}
-      <section id="about" className="py-20 px-4 bg-slate-800/50">
-        <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              About Me
-            </h2>
-            <div className="max-w-4xl mx-auto">
-              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-                I am an Information Technology student at Dedan Kimathi University of Technology, passionate about
-                building real-world software solutions. With hands-on experience in developing full-stack web
-                applications, I am driven by curiosity and a commitment to continuous improvement. I thrive on building
-                impactful projects with modern technologies.
-              </p>
+  if (currentView === 'projects') {
+    return (
+      <div className="min-h-screen bg-black text-green-400 font-mono p-4 lg:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-6 lg:mb-8">
+            <h2 className="text-xl lg:text-2xl font-bold mb-4">&gt; PROJECT DATABASE</h2>
+            <div className="border border-green-400/30 p-3 lg:p-4">
+              {terminalHistory.map((line, index) => (
+                <div key={index} className="text-xs lg:text-sm mb-1">{line}</div>
+              ))}
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            {quickFacts.map((fact, index) => (
-              <div
-                key={index}
-                className="bg-slate-700/50 p-6 rounded-lg border border-slate-600 hover:border-blue-400/50 transition-colors"
-              >
-                <div className="flex items-center mb-3">
-                  {fact.label === "University" && <Calendar className="w-5 h-5 text-blue-400 mr-2" />}
-                  {fact.label === "GitHub" && <Github className="w-5 h-5 text-purple-400 mr-2" />}
-                  {fact.label === "Email" && <Mail className="w-5 h-5 text-green-400 mr-2" />}
-                  {fact.label === "Interests" && <Heart className="w-5 h-5 text-pink-400 mr-2" />}
-                  <h3 className="font-semibold text-gray-200">{fact.label}</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-4 mb-6 lg:mb-8">
+            {projects.map((project) => (
+              <div key={project.id} className="border border-green-400/30 p-3 lg:p-4 hover:bg-green-400/5 transition-colors">
+                <div className="flex items-center gap-2 lg:gap-3">
+                  <span className="text-green-300 text-xs lg:text-sm">[{project.id}]</span>
+                  <div>
+                    <div className="font-bold text-xs lg:text-sm">{project.title}</div>
+                    <div className="text-xs text-green-300">{project.category}</div>
+                  </div>
                 </div>
-                <p className="text-gray-400 text-sm">{fact.value}</p>
               </div>
             ))}
           </div>
+
+          <form onSubmit={handleTerminalSubmit} className="border border-green-400/30 p-3 lg:p-4">
+            <div className="flex items-center gap-2">
+              <span className="text-green-300">&gt;</span>
+              <input
+                ref={inputRef}
+                type="text"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-xs lg:text-sm"
+                placeholder="Enter project number (1-6) or 'back'..."
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+              />
+              <span className="animate-pulse">_</span>
+            </div>
+          </form>
         </div>
-      </section>
+      </div>
+    )
+  }
 
-      {/* Projects Section - Added glow effects */}
-      <section id="projects" className="py-20 px-4">
-        <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Featured Projects
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              A showcase of my recent work, demonstrating my skills in full-stack development, UI/UX design, and
-              problem-solving with real-world applications.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {projects.map((project, index) => (
-              <div key={index} className="group">
-                <Card className="overflow-hidden bg-slate-800/50 border-slate-600 hover:border-blue-400/50 transition-all duration-300 h-full relative hover:shadow-2xl hover:shadow-blue-500/20">
-                  {/* Glow effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
-
-                  <div className="relative overflow-hidden">
-                    <Image
-                      src={project.image || "/placeholder.svg"}
-                      alt={project.title}
-                      width={600}
-                      height={300}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
-                      <Button asChild className="bg-blue-500 hover:bg-blue-600 shadow-lg shadow-blue-500/25">
-                        <Link href={project.url} target="_blank">
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          View Live Demo
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                  <CardHeader className="relative z-10">
-                    <div className="flex justify-between items-start mb-2">
-                      <CardTitle className="text-xl text-white group-hover:text-blue-300 transition-colors">
-                        {project.title}
-                      </CardTitle>
-                      <Badge
-                        variant="secondary"
-                        className="bg-blue-500/20 text-blue-400 border-blue-400/30 group-hover:bg-blue-500/30 group-hover:shadow-sm group-hover:shadow-blue-400/50 transition-all"
-                      >
-                        {project.category}
-                      </Badge>
-                    </div>
-                    <CardDescription className="text-gray-300 text-base leading-relaxed group-hover:text-gray-200 transition-colors">
-                      {project.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="relative z-10">
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.tech.map((tech, techIndex) => (
-                        <Badge
-                          key={techIndex}
-                          variant="outline"
-                          className="text-xs border-slate-500 text-gray-300 hover:border-blue-400 hover:text-blue-400 group-hover:border-blue-400/70 group-hover:text-blue-300 transition-colors"
-                        >
-                          {tech}
-                        </Badge>
-                      ))}
-                    </div>
-                    <Button
-                      asChild
-                      className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 group-hover:shadow-lg group-hover:shadow-blue-500/25 transition-all"
-                    >
-                      <Link href={project.url} target="_blank">
-                        Visit Project <ExternalLink className="w-4 h-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
+  if (currentView === 'project-detail' && selectedProject) {
+    return (
+      <div className="min-h-screen bg-black text-green-400 font-mono p-4 lg:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+            {/* Left - Project Image */}
+            <div>
+              <div className="border border-green-400/30 p-3 lg:p-4">
+                <div className="relative h-48 lg:h-64 mb-4">
+                  <Image
+                    src={selectedProject.image}
+                    alt={selectedProject.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="text-center">
+                  <div className="text-green-300 mb-2 text-sm lg:text-base">PROJECT VISUAL</div>
+                  <div className="text-xs lg:text-sm">STATUS: ACTIVE</div>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
 
-      {/* Skills Section */}
-      <section id="skills" className="py-20 px-4 bg-slate-800/50">
-        <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Technical Skills
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              My expertise spans across modern web technologies, from frontend frameworks to backend systems.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {Object.entries(skills).map(([category, skillList], index) => (
-              <Card
-                key={category}
-                className="bg-slate-700/50 border-slate-600 hover:border-blue-400/50 transition-colors h-full"
-              >
-                <CardHeader>
-                  <CardTitle className="text-lg text-white capitalize flex items-center">
-                    {category === "languages" && <Code className="w-5 h-5 mr-2 text-blue-400" />}
-                    {category === "frameworks" && <Globe className="w-5 h-5 mr-2 text-purple-400" />}
-                    {category === "backend" && <Database className="w-5 h-5 mr-2 text-green-400" />}
-                    {category === "it" && <Code className="w-5 h-5 mr-2 text-orange-400" />}
-                    {category === "cybersecurity" && <Code className="w-5 h-5 mr-2 text-red-400" />}
-                    {category === "other" && <User className="w-5 h-5 mr-2 text-pink-400" />}
-                    {category}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {skillList.map((skill, skillIndex) => (
-                      <div key={skillIndex} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-300 text-sm font-medium">{skill.name}</span>
-                          <span className="text-gray-400 text-xs">{skill.level}%</span>
-                        </div>
-                        <div className="w-full bg-slate-600 rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full transition-all duration-1000 ${
-                              category === "languages"
-                                ? "bg-gradient-to-r from-blue-400 to-blue-600"
-                                : category === "frameworks"
-                                  ? "bg-gradient-to-r from-purple-400 to-purple-600"
-                                  : category === "backend"
-                                    ? "bg-gradient-to-r from-green-400 to-green-600"
-                                    : category === "it"
-                                      ? "bg-gradient-to-r from-orange-400 to-orange-600"
-                                      : category === "cybersecurity"
-                                        ? "bg-gradient-to-r from-red-400 to-red-600"
-                                        : "bg-gradient-to-r from-pink-400 to-pink-600"
-                            }`}
-                            style={{ width: `${skill.level}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Resume Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto text-center">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Resume
-            </h2>
-            <p className="text-xl text-gray-300 mb-8">
-              Download my complete resume to learn more about my experience, education, and projects.
-            </p>
-            <Button
-              size="lg"
-              onClick={downloadResume}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-            >
-              <Download className="mr-2 w-5 h-5" />
-              Download Resume
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="py-20 px-4 bg-slate-800/50">
-        <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Let's Connect
-            </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              I'm always interested in new opportunities and exciting projects. Let's discuss how we can work together.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
-            <Card className="bg-slate-700/50 border-slate-600 hover:border-blue-400/50 transition-colors text-center">
-              <CardHeader>
-                <Mail className="w-8 h-8 mx-auto text-blue-400 mb-2" />
-                <CardTitle className="text-lg text-white">Email</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-300 text-sm">collinsaruse@gmail.com</p>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-slate-700/50 border-slate-600 hover:border-purple-400/50 transition-colors text-center">
-              <CardHeader>
-                <Github className="w-8 h-8 mx-auto text-purple-400 mb-2" />
-                <CardTitle className="text-lg text-white">GitHub</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Link
-                  href="https://github.com/Collinsarusei"
-                  target="_blank"
-                  className="text-gray-300 text-sm hover:text-purple-400"
-                >
-                  Collinsarusei
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-slate-700/50 border-slate-600 hover:border-blue-600/50 transition-colors text-center">
-              <CardHeader>
-                <Linkedin className="w-8 h-8 mx-auto text-blue-600 mb-2" />
-                <CardTitle className="text-lg text-white">LinkedIn</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Link
-                  href="https://www.linkedin.com/in/collins-arusei-b5b74a2a9"
-                  target="_blank"
-                  className="text-gray-300 text-sm hover:text-blue-600"
-                >
-                  Collins Arusei
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-slate-700/50 border-slate-600 hover:border-pink-400/50 transition-colors text-center">
-              <CardHeader>
-                <Instagram className="w-8 h-8 mx-auto text-pink-400 mb-2" />
-                <CardTitle className="text-lg text-white">Instagram</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Link
-                  href="https://instagram.com/chemoget_collo"
-                  target="_blank"
-                  className="text-gray-300 text-sm hover:text-pink-400"
-                >
-                  @chemoget_collo
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="text-center mt-12">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
-              asChild
-            >
-              <Link href="mailto:collinsaruse@gmail.com">
-                <Mail className="w-4 h-4 mr-2" />
-                Get In Touch
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="py-8 px-4 bg-slate-900 border-t border-slate-700">
-        <div className="container mx-auto text-center">
-          <div className="space-y-4">
-            <p className="text-gray-400">Built & designed by Collins Arusei, 2025</p>
-            <div className="flex justify-center items-center gap-6">
-              <Button variant="ghost" size="sm" className="text-orange-400 hover:text-orange-300" asChild>
-                <Link href="https://giftme-eta.vercel.app/support-developer" target="_blank">
-                  <Coffee className="w-4 h-4 mr-2" />
-                  Buy Me a Coffee
-                </Link>
-              </Button>
-              <Link
-                href="https://www.linkedin.com/in/collins-arusei-b5b74a2a9"
-                target="_blank"
-                className="text-blue-600 hover:text-blue-400"
-              >
-                <Linkedin className="w-5 h-5" />
-              </Link>
-              <Link
-                href="https://instagram.com/chemoget_collo"
-                target="_blank"
-                className="text-pink-400 hover:text-pink-300"
-              >
-                <Instagram className="w-5 h-5" />
-              </Link>
-              <Link
-                href="https://github.com/Collinsarusei"
-                target="_blank"
-                className="text-purple-400 hover:text-purple-300"
-              >
-                <Github className="w-5 h-5" />
-              </Link>
+            {/* Right - Project Details */}
+            <div>
+              <div className="border border-green-400/30 p-3 lg:p-4 h-full">
+                <pre className="text-xs lg:text-sm leading-relaxed whitespace-pre-wrap">
+                  {typedText}
+                  <span className="animate-pulse">_</span>
+                </pre>
+              </div>
             </div>
           </div>
+
+          {/* Terminal Input */}
+          <form onSubmit={handleTerminalSubmit} className="mt-6 lg:mt-8 border border-green-400/30 p-3 lg:p-4">
+            <div className="flex items-center gap-2">
+              <span className="text-green-300">&gt;</span>
+              <input
+                ref={inputRef}
+                type="text"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-xs lg:text-sm"
+                placeholder="Type 'back' to return to project list..."
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+              />
+              <span className="animate-pulse">_</span>
+            </div>
+          </form>
         </div>
-      </footer>
-    </div>
-  )
+      </div>
+    )
+  }
+
+  if (currentView === 'skills') {
+    return (
+      <div className="min-h-screen bg-black text-green-400 font-mono p-4 lg:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-6 lg:mb-8">
+            <h2 className="text-xl lg:text-2xl font-bold mb-4">&gt; SYSTEM CAPABILITIES</h2>
+            <div className="border border-green-400/30 p-4 lg:p-6">
+              <pre className="text-xs lg:text-sm leading-relaxed whitespace-pre-wrap">
+                {typedText}
+                <span className="animate-pulse">_</span>
+              </pre>
+            </div>
+          </div>
+
+          {/* Terminal Input */}
+          <form onSubmit={handleTerminalSubmit} className="border border-green-400/30 p-3 lg:p-4">
+            <div className="flex items-center gap-2">
+              <span className="text-green-300">&gt;</span>
+              <input
+                ref={inputRef}
+                type="text"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-xs lg:text-sm"
+                placeholder="Type 'back' to return to dashboard..."
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+              />
+              <span className="animate-pulse">_</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
+  if (currentView === 'contacts') {
+    return (
+      <div className="min-h-screen bg-black text-green-400 font-mono p-4 lg:p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-6 lg:mb-8">
+            <h2 className="text-xl lg:text-2xl font-bold mb-4">&gt; COMMUNICATION PROTOCOLS</h2>
+            <div className="border border-green-400/30 p-4 lg:p-6">
+              <div className="text-xs lg:text-sm leading-relaxed">
+                <div>&gt; COMMUNICATION_PROTOCOLS // CONTACT_INFORMATION</div>
+                <div>&gt;</div>
+                <div>&gt; PRIMARY CONTACT:</div>
+                <div>&gt; Email: <a href="mailto:collinsaruse@gmail.com" className="text-green-300 hover:text-green-200 underline transition-colors">collinsaruse@gmail.com</a></div>
+                <div>&gt;</div>
+                <div>&gt; PROFESSIONAL NETWORKS:</div>
+                <div>&gt; GitHub: <a href="https://github.com/Collinsarusei" target="_blank" rel="noopener noreferrer" className="text-green-300 hover:text-green-200 underline transition-colors">https://github.com/Collinsarusei</a></div>
+                <div>&gt; LinkedIn: <a href="https://www.linkedin.com/in/collins-arusei-b5b74a2a9" target="_blank" rel="noopener noreferrer" className="text-green-300 hover:text-green-200 underline transition-colors">https://www.linkedin.com/in/collins-arusei-b5b74a2a9</a></div>
+                <div>&gt;</div>
+                <div>&gt; SOCIAL CHANNEL:</div>
+                <div>&gt; Instagram: <a href="https://instagram.com/chemoget_collo" target="_blank" rel="noopener noreferrer" className="text-green-300 hover:text-green-200 underline transition-colors">https://instagram.com/chemoget_collo</a></div>
+                <div>&gt;</div>
+                <div>&gt; ACADEMIC INFO:</div>
+                <div>&gt; University: Dedan Kimathi University of Technology (2023–Present)</div>
+                <div>&gt;</div>
+                <div>&gt; PERSONAL INTERESTS:</div>
+                <div>&gt; Content Creation, Hiking, Chess, Music and watching millitary documentaries /movies</div>
+                <div>&gt;</div>
+                <div>&gt; COMMAND: Type 'back' to return to dashboard</div>
+                <div className="animate-pulse">_</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Terminal Input */}
+          <form onSubmit={handleTerminalSubmit} className="border border-green-400/30 p-3 lg:p-4">
+            <div className="flex items-center gap-2">
+              <span className="text-green-300">&gt;</span>
+              <input
+                ref={inputRef}
+                type="text"
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-xs lg:text-sm"
+                placeholder="Type 'back' to return to dashboard..."
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+              />
+              <span className="animate-pulse">_</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
+  return null
 }

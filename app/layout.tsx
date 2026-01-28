@@ -1,13 +1,23 @@
 import type { Metadata } from 'next'
-import { GeistSans } from 'geist/font/sans'
-import { GeistMono } from 'geist/font/mono'
+import { Inter } from 'next/font/google'
+import { Fira_Code } from 'next/font/google'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Collins Arusei',
-  description: 'This is collins portforlio',
+  title: 'COLLINS ARUSEI // SYSTEM INTERFACE',
+  description: 'Secure command interface for Collins Arusei - Software Developer',
   generator: 'v0.dev',
 }
+
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+})
+
+const firaCode = Fira_Code({ 
+  subsets: ['latin'],
+  variable: '--font-fira-code',
+})
 
 export default function RootLayout({
   children,
@@ -15,8 +25,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body className={GeistSans.className}>{children}</body>
+    <html lang="en" className={`${inter.variable} ${firaCode.variable} dark`}>
+      <body className={`${inter.className} bg-background text-foreground antialiased`}>
+        <div className="grid-overlay min-h-screen">
+          {children}
+        </div>
+      </body>
     </html>
   )
 }
